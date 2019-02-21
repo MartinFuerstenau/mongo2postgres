@@ -1,10 +1,12 @@
 package demo;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -24,6 +26,7 @@ public class Mongo2postgresApplicationTests {
 					.withStartupTimeout(Duration.ofSeconds(600));
 
 	static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+		@Override
 		public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
 			System.out.println("spring.datasource.url=" + postgreSQLContainer.getJdbcUrl()
 					+ "\nspring.datasource.username=" + postgreSQLContainer.getUsername()
@@ -37,9 +40,26 @@ public class Mongo2postgresApplicationTests {
 		}
 	}
 
+	@Autowired
+	HerosRepository repo;
+
 	@Test
 	public void contextLoads() {
-		System.out.println("TEST");
+		for (int i = 0; i < 10; i++) {
+			Hero hero = new Hero();
+			hero.setName("Super Hero " + i);
+			hero.setSuperpower("SuperPower" + i);
+
+			HeroEntity heroEntity = new HeroEntity();
+			heroEntity.setHero(hero);
+
+			System.out.println(heroEntity);
+			HeroEntity save = repo.save(heroEntity);
+			System.out.println(save);
+		}
+
+		List<HeroEntity> findAll = repo.findAll();
+		findAll.forEach(System.out::println);
 	}
 
 }
