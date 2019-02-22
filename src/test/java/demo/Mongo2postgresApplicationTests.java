@@ -90,7 +90,7 @@ public class Mongo2postgresApplicationTests {
 
 	@Test
 	public void findByName() {
-		HeroEntity findByName = repo.findAllByName("Iron Man");
+		HeroEntity findByName = repo.findByName("Iron Man");
 		System.out.println(findByName);
 	}
 
