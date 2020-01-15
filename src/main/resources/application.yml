@@ -1,0 +1,32 @@
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        # postgres started with docker or docker-compose
+        url: jdbc:postgresql://172.19.0.2:5432/
+        password: supersecretpassword
+        username: postgres
+    jpa:
+        show-sql: true
+        hibernate.ddl-auto: validate
+        properties:
+            hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+            hibernate.id.new_generator_mappings: false
+# https://stackoverflow.com/a/49684170
+            hibernate.temp.use_jdbc_metadata_defaults: false
+
+management:
+  endpoint:
+    health:
+      show-details: ALWAYS
+  endpoints:
+    web:
+      base-path: /monitoring
+      exposure:
+        include: info, health, env, metrics, flyway, prometheus
+  metrics:
+    export:
+      atlas:
+        enabled: false
+
+# postgres started with docker swarm using overlay network
+#spring.datasource.url=jdbc:postgresql://192.168.1.8:5432/
