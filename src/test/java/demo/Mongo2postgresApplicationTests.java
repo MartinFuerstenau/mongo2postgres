@@ -1,10 +1,13 @@
 package demo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.assertj.core.groups.Tuple;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -85,18 +88,24 @@ public class Mongo2postgresApplicationTests {
 	@Test
 	public void findAll() {
 		List<HeroEntity> findAll = repo.findAll();
-		findAll.forEach(System.out::println);
+		assertThat(findAll).hasSize(3);
+//		findAll.forEach(System.out::println);
 	}
 
 	@Test
 	public void findByName() {
 		HeroEntity findByName = repo.findByName("Iron Man");
-		System.out.println(findByName);
+		assertThat(findByName.getHero().getAlterEgo().getName()).isEqualTo("Toni Stark");
+//		System.out.println(findByName);
 	}
 
 	@Test
 	public void findBySuperpower() {
 		List<HeroEntity> findAllBySuperpower = repo.findAllBySuperpower("Reflexes");
-		findAllBySuperpower.forEach(System.out::println);
+		assertThat(findAllBySuperpower).hasSize(2);
+		assertThat(findAllBySuperpower)
+				.extracting(hero -> hero.getHero().getName(), hero -> hero.getHero().getUniverse())
+				.containsOnly(Tuple.tuple("Batman", UNIVERSE.DC), Tuple.tuple("Iron Man", UNIVERSE.MARVEL));
+//		findAllBySuperpower.forEach(System.out::println);
 	}
 }
